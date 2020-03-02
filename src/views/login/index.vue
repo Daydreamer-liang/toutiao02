@@ -5,21 +5,21 @@
         <div class="title">
             <img src="../../assets/img/logo_index.png" alt="">
         </div>
-        <el-from>
-            <el-from-item>
+        <el-form>
+            <el-form-item>
                 <el-input placeholder="请输入手机号"></el-input>
-            </el-from-item>
-            <el-from-item>
+            </el-form-item>
+            <el-form-item>
                 <el-input style="width:60%" placeholder="请输入验证码"></el-input>
                 <el-button style="float:right" type="primary">点击发送</el-button>
-            </el-from-item>
-            <el-from-item>
+            </el-form-item>
+            <el-form-item>
                 <el-checkbox>我已经同意了，行了吧</el-checkbox>
-            </el-from-item>
-            <el-from-item>
+            </el-form-item>
+            <el-form-item>
                 <el-button  type="primary" style="width:100%">登录</el-button>
-            </el-from-item>
-        </el-from>
+            </el-form-item>
+        </el-form>
    </el-card>
     <!-- 表单 -->
  </div>
