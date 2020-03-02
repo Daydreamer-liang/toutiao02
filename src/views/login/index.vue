@@ -5,7 +5,7 @@
       <div class="title">
         <img src="../../assets/img/logo_index.png" alt />
       </div>
-      <el-form :model="loginform" :rules="loginrules">
+      <el-form ref='loginForm' :model="loginform" :rules="loginrules" >
         <el-form-item prop="mobile">
           <el-input v-model="loginform.mobile" placeholder="请输入手机号"></el-input>
         </el-form-item>
@@ -17,7 +17,7 @@
           <el-checkbox v-model="loginform.checkbox">我已经同意了，行了吧</el-checkbox>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" style="width:100%">登录</el-button>
+          <el-button @click="login" type="primary" style="width:100%">登录</el-button>
         </el-form-item>
       </el-form>
     </el-card>
@@ -51,6 +51,23 @@ export default {
           }
         }]
       }
+    }
+  },
+  methods: {
+    login () {
+      // 登陆：手动校验 点击的时候 调用validate方法
+      //   第一种 传入一个回调函数
+      this.$refs.loginForm.validate(function (isOK) {
+        if (isOK) {
+          console.log('通过')
+        } else {
+          console.log('未通过')
+        }
+      })
+      //   第二种方法
+    //   this.$refs.loginForm.validate().then(() => {
+    //     console.log('通过')
+    //   })
     }
   }
 }
