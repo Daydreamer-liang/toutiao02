@@ -5,7 +5,7 @@
       <div class="title">
         <img src="../../assets/img/logo_index.png" alt />
       </div>
-      <el-form ref='loginForm' :model="loginform" :rules="loginrules" >
+      <el-form ref="loginForm" :model="loginform" :rules="loginrules">
         <el-form-item prop="mobile">
           <el-input v-model="loginform.mobile" placeholder="请输入手机号"></el-input>
         </el-form-item>
@@ -57,17 +57,29 @@ export default {
     login () {
       // 登陆：手动校验 点击的时候 调用validate方法
       //   第一种 传入一个回调函数
-      this.$refs.loginForm.validate(function (isOK) {
-        if (isOK) {
-          console.log('通过')
-        } else {
-          console.log('未通过')
-        }
-      })
-      //   第二种方法
-    //   this.$refs.loginForm.validate().then(() => {
-    //     console.log('通过')
+    //   this.$refs.loginForm.validate(function (isOK) {
+    //     if (isOK) {
+    //       console.log('通过')
+    //     } else {
+    //       console.log('未通过')
+    //     }
     //   })
+      // 第二种方法
+      this.$refs.loginForm.validate().then(() => {
+        this.$axios({
+          url: '/authorizations',
+          data: this.loginform,
+          method: 'post'
+        }).then(res => {
+          window.localStorage.setItem('user-token', res.data.data.token)
+          this.$router.push('/')
+        }).catch(() => {
+          this.$message({
+            message: '错误',
+            type: 'warning'
+          })
+        })
+      })
     }
   }
 }
