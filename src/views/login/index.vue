@@ -45,11 +45,15 @@ export default {
           { required: true, message: '验证码不能为空' },
           { pattern: /^\d{6}$/, message: '验证码格式不正确' }
         ],
-        checkbox: [{
-          validator: function (rule, value, callback) {
-            value ? callback() : callback(new Error('您必须同意我们的霸王条款'))
+        checkbox: [
+          {
+            validator: function (rule, value, callback) {
+              value
+                ? callback()
+                : callback(new Error('您必须同意我们的霸王条款'))
+            }
           }
-        }]
+        ]
       }
     }
   },
@@ -57,28 +61,32 @@ export default {
     login () {
       // 登陆：手动校验 点击的时候 调用validate方法
       //   第一种 传入一个回调函数
-    //   this.$refs.loginForm.validate(function (isOK) {
-    //     if (isOK) {
-    //       console.log('通过')
-    //     } else {
-    //       console.log('未通过')
-    //     }
-    //   })
+      //   this.$refs.loginForm.validate(function (isOK) {
+      //     if (isOK) {
+      //       console.log('通过')
+      //     } else {
+      //       console.log('未通过')
+      //     }
+      //   })
       // 第二种方法
       this.$refs.loginForm.validate().then(() => {
         this.$axios({
           url: '/authorizations',
           data: this.loginform,
           method: 'post'
-        }).then(res => {
-          window.localStorage.setItem('user-token', res.data.data.token)
-          this.$router.push('/')
-        }).catch(() => {
-          this.$message({
-            message: '错误',
-            type: 'warning'
-          })
         })
+          .then(res => {
+            window.localStorage.setItem('user-token', res.data.data.token)
+            this.$router.push('/home')
+          })
+          .catch(() => {
+            //   this.$message({
+            //     message: '错误',
+            //     type: 'warning'
+            //   })
+            //   this.$message.error('账户或密码错误')
+            this.$alert('账户或密码错误')
+          })
       })
     }
   }
@@ -87,13 +95,23 @@ export default {
 
 <style lang="less" scoped>
 .login {
-  background-image: url("../../assets/img/login_bg.jpg");
   height: 100vh; //当前可视区域分成100份
-  background-size: cover;
+
   display: flex;
   justify-content: center;
   align-items: center;
+  &:before {
+    content: "123"; //必须有
+    height: 100%;
+    width: 100%;
+    background-image: url("../../assets/img/login_xhr.jpg");
+    background-size: cover; //自适应
+    position: absolute; //脱离文档
+    // filter: blur(5px);//毛玻璃效果（模糊）
+  }
   .login-card {
+    background: rgba(0, 0, 0, .7);
+    z-index: 2;
     width: 400px;
     height: 300px;
   }
