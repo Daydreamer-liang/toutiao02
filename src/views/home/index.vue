@@ -9,9 +9,9 @@
       <el-header>
         <layout-header></layout-header>
       </el-header>
-      <el-main>
+      <el-main style="padding:0">
         <!-- 这里应该放一个二级容器 -->
-        <h1>内容</h1>
+
         <router-view></router-view>
       </el-main>
     </el-container>

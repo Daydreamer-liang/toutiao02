@@ -17,7 +17,7 @@
         <!-- 二级菜单还是使用<el-menu-item> -->
         <template slot="title">
           <i class="el-icon-menu"></i>
-          <span>123</span>
+          <span>内容管理</span>
         </template>
         <el-menu-item index="/home/publish">发布文章</el-menu-item>
         <el-menu-item index="/home/articles">内容列表</el-menu-item>
@@ -29,7 +29,7 @@
         <!-- 二级菜单还是使用<el-menu-item> -->
         <template slot="title">
           <i class="el-icon-menu"></i>
-          <span>123</span>
+          <span>粉丝管理</span>
         </template>
         <el-menu-item index="/home/picture">图文数据</el-menu-item>
         <el-menu-item index="/home/fansphoto">粉丝概况</el-menu-item>
