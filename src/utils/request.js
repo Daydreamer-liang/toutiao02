@@ -8,6 +8,11 @@
 // 6.函数1里: config 是一个对象 传进来 在传出去，函数2：Promise.reject(error)抛出错误
 // 7.第一个函数内 获取token 并 统一注入token： config.headers.Authorization = `Bearer ${token}`
 // 8.components/home/layout-hearder.vue 删掉：获取的token 和axios里的hearders
+// -----------------------------------------------------
+// 封装相应拦截器
+// 1.相应拦截器 是服务器返回的数据，到达 axios .then之前的数据 我们要对数据进行结构return response.data
+// 2.layout - heaser.vue 里面 读取的返回参数 必须减少一层，res.data.data 变成res.data
+
 import axios from 'axios'
 axios.defaults.baseURL = 'http://ttapi.research.itcast.cn/mp/v1_0'// 配置公共请求地址注册
 
@@ -22,5 +27,14 @@ axios.interceptors.request.use(function (config) {
   // 失败时 执行第二个函数 axios是一个支持 promise 失败了 就直接reject
   // reject会直接进入到axios 的catch中
   return Promise.reject(error)
+})
+
+// 相应拦截器开发
+axios.interceptors.response.use(function (response) {
+  // 回调函数第一个参数是响应体，在拦截器中 需要将参数返回 response里的data
+//   而有的接口没有返回参数 就需要判断
+  return response.data ? response.data : {}
+}, function () {
+
 })
 export default axios

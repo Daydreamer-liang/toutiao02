@@ -44,7 +44,7 @@ export default {
     //   }
     }).then(res => {
       // 加载成功，赋值给userInfo
-      this.userInfo = res.data.data
+      this.userInfo = res.data
       //   console.log(res.data.data)
     })
   },
