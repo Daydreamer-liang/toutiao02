@@ -36,12 +36,12 @@ export default {
   },
   //   获取用户个人信息
   created () {
-    const token = localStorage.getItem('user-token')
+    // const token = localStorage.getItem('user-token')
     this.$axios({
-      url: '/user/profile',
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
+      url: '/user/profile'
+    //   headers: {
+    //     Authorization: `Bearer ${token}`
+    //   }
     }).then(res => {
       // 加载成功，赋值给userInfo
       this.userInfo = res.data.data
