@@ -12,8 +12,11 @@
 // 封装相应拦截器
 // 1.相应拦截器 是服务器返回的数据，到达 axios .then之前的数据 我们要对数据进行结构return response.data
 // 2.layout - heaser.vue 里面 读取的返回参数 必须减少一层，res.data.data 变成res.data
-
+// 3.当请求的状态码 不是200.201.204 就会进入响应拦截器的第二个参数
+// 4.之前的导航守卫已经验证了是否有token 我们这里401报错 就清空错误的token 并跳回登录页
+// 5.window.location.href 不可以 这是强制刷新页面，我们这里用router 引用import router 才可以用router
 import axios from 'axios'
+import router from '@/router'// 路由实例对象
 axios.defaults.baseURL = 'http://ttapi.research.itcast.cn/mp/v1_0'// 配置公共请求地址注册
 
 // 请求拦截器的开发
@@ -32,9 +35,14 @@ axios.interceptors.request.use(function (config) {
 // 相应拦截器开发
 axios.interceptors.response.use(function (response) {
   // 回调函数第一个参数是响应体，在拦截器中 需要将参数返回 response里的data
-//   而有的接口没有返回参数 就需要判断
+  //   而有的接口没有返回参数 就需要判断
   return response.data ? response.data : {}
-}, function () {
-
+}, function (error) {
+  // error是错误对象 包含错误状态码和相应信息
+  if (error.response.status === 401) {
+    localStorage.removeItem('user-token')// 删除钥匙
+    router.push('/login')
+  }
+  return Promise.reject(error)
 })
 export default axios
