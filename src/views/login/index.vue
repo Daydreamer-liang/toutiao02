@@ -3,7 +3,12 @@
     <!-- 表单 -->
     <el-card class="login-card">
       <div class="title">
-        <img src="../../assets/img/logo_index.png" alt />
+        <!-- <img src="../../assets/img/logo_index.png" alt /> -->
+        <audio
+          class="success"
+          autoplay="autoplay"
+          src="../../static/Hans Zimmer&Junkie XL-Is She With You-.mp3"
+        ></audio>
       </div>
       <el-form ref="loginForm" :model="loginform" :rules="loginrules">
         <el-form-item prop="mobile">
@@ -14,7 +19,7 @@
           <el-button style="float:right" type="primary">点击发送</el-button>
         </el-form-item>
         <el-form-item prop="checkbox">
-          <el-checkbox v-model="loginform.checkbox">我已经同意了，行了吧</el-checkbox>
+          <el-checkbox checked="checked" v-model="loginform.checkbox">我已经同意了，行了吧</el-checkbox>
         </el-form-item>
         <el-form-item>
           <el-button @click="login" type="primary" style="width:100%">登录</el-button>
@@ -90,7 +95,18 @@ export default {
           })
       })
     }
+    // play () {
+    //   var music = document.getElementById('music') // 判断如果音乐停止播放中，就让他播放。。。
+    //   if (music.paused) {
+    //     music.paused = false
+    //     music.play()
+    //   }
+    // } // 调用函数
+    // setInterval(play(), 1);
   }
+  //   created () {
+  //     setInterval(this.play(), 1)
+  //   }
 }
 </script>
 
@@ -105,19 +121,41 @@ export default {
     content: "123"; //必须有
     height: 100%;
     width: 100%;
-    background-image: url("../../assets/img/login_xhr.jpg");
+    background-image: url("../../assets/img/shenqi01.jpg");
+    // background-image: url("../../assets/img/shanhe.jpg");
     background-size: cover; //自适应
     position: absolute; //脱离文档
     // filter: blur(5px);//毛玻璃效果（模糊）
   }
   .login-card {
-    background: rgba(0, 0, 0, .7);
+    background: rgba(0, 0, 0, 0.6);
     z-index: 2;
     width: 400px;
     height: 300px;
+    /deep/.el-input__inner {
+      background: rgba(0, 0, 0, 0.3);
+    }
+    /deep/.el-button--primary {
+      color: rgb(165, 164, 164);
+      background: rgba(0, 0, 0, 0.3);
+      border-color: #f56c6c;
+      //   border-color: #409eff;
+    }
+    /deep/.el-checkbox__input.is-checked .el-checkbox__inner,
+    .el-checkbox__input.is-indeterminate .el-checkbox__inner {
+      background: rgba(0, 0, 0, 0.3);
+      border-color: #409eff;
+    }
+    /deep/.el-checkbox__input.is-checked + .el-checkbox__label {
+      color: rgb(165, 164, 164);
+    }
+    /deep/.el-checkbox__inner {
+      background: rgba(0, 0, 0, 0.3);
+    }
   }
   .title {
     text-align: center;
+    height: 30px;
     img {
       height: 40px;
     }

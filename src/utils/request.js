@@ -17,8 +17,11 @@
 // 5.window.location.href 不可以 这是强制刷新页面，我们这里用router 引用import router 才可以用router
 import axios from 'axios'
 import router from '@/router'// 路由实例对象
+import JSONBig from 'json-bigint'
 axios.defaults.baseURL = 'http://ttapi.research.itcast.cn/mp/v1_0'// 配置公共请求地址注册
-
+axios.defaults.transformResponse = [function (data) {
+  return data ? JSONBig.parse(data) : {}// 大数字转化
+}]
 // 请求拦截器的开发
 axios.interceptors.request.use(function (config) {
   // 成功时 执行第一个函数，第一个参数 会有一个config，config就是所有axios请求的信息
