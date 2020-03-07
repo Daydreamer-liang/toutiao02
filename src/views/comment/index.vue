@@ -1,11 +1,11 @@
 <template>
-  <!-- 这是评论内容 需要挂在到路由表上 -->
+  <!-- 这是评论显示内容 需要挂在到路由表上 -->
   <!--
    1.引入面包屑导航
    2.给面包屑导航slot="title" 这个坑填 值 -插槽
    3.slot="header" 给了  <el-card>
   -->
-  <el-card>
+  <el-card v-loading="loading">
     <!-- 评论头 -->
     <bread-crumb slot="header">
       <template slot="title">评论管理</template>
@@ -27,6 +27,17 @@
         </template>
       </el-table-column>
     </el-table>
+    <el-row type="flex" justify="center" align="middle" style="height:80px">
+      <!-- 分页组件 total 总页码  每页多少条-->
+      <el-pagination
+        background
+        layout="prev, pager, next"
+        :current-page="page.currentPage"
+        :page-size="page.pageSize"
+        :total="page.total"
+        @current-change="changePage"
+      ></el-pagination>
+    </el-row>
   </el-card>
 </template>
 
@@ -34,22 +45,41 @@
 export default {
   data () {
     return {
-      list: []
+      list: [],
+      page: {
+        total: 0, // 默认总数是0
+        currentPage: 1, // 默认的页码 是第一个页  决定了当前页码是第几页
+        pageSize: 10 // page-size的默认值是10
+      },
+      loading: false
     }
   },
   methods: {
     //   获取评论数据
     getComment () {
+      this.loading = true // 打开遮罩层
       this.$axios({
         url: '/articles',
         // params 是传get参数 也就是query
         params: {
-          response_type: 'comment' // 此参数用来控制获取数据类型
+          response_type: 'comment', // 此参数用来控制获取数据类型
+          page: this.page.currentPage, // 查对应页码
+          per_page: this.page.pageSize // 查10条
         }
-      }).then(res => {
+      }).then(results => {
         // console.log(res)
-        this.list = res.data.results
+        this.list = results.data.results
+        this.page.total = results.data.total_count // 将总数赋值
+        this.loading = false // 请求完毕 关闭遮罩层
       })
+    },
+    // 页码改变事件  newPage就是点击切换的最新页码
+    changePage (newPage) {
+      // newPage是最新的切换页码
+      // 将最新的页码 设置给 page下的当前页码
+      this.page.currentPage = newPage // 赋值最新页码
+      // 重新拉取数据
+      this.getComment() // 获取评论
     },
     //  定义一个格式化的函数
     formatterBool (row, column, cellValue, index) {

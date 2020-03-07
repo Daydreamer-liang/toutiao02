@@ -23,6 +23,10 @@ const routes = [
       {
         path: 'comment', // 评论列表的地址，不要写/
         component: () => import('@/views/comment')// 评论列表的组件。按需加载
+      },
+      {
+        path: 'material', // 评论列表的地址，不要写/
+        component: () => import('@/views/material')// 评论列表的组件。按需加载
       }
     ]
   },
