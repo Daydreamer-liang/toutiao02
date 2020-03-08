@@ -33,16 +33,13 @@
       <span>共找到1000条复合条件的内容</span>
     </el-card>
     <!-- 内容 -->
-    <div class="article-item">
+    <div class="article-item" v-for="item in list " :key="item.id.toString()">
       <div class="left">
-        <img
-          src="https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1583574111093&di=6f423a08762af8d11ecc47cd25891623&imgtype=0&src=http%3A%2F%2Fwww.sinaimg.cn%2Fdy%2Fslidenews%2F2_img%2F2016_23%2F792_1819513_700462.jpg"
-          alt
-        />
+        <img :src=" item.cover.images.length ? item.cover.images[0] : defaultImg" alt />
         <div class="info">
-          <span>我爱我的祖国</span>
-          <el-tag class="tag">已发表</el-tag>
-          <span class="date">2020-02-18 10:12:19</span>
+          <span>{{item.title}}</span>
+          <el-tag :type=" item.status | filterType " class="tag">{{ item.status | filterStatus }}</el-tag>
+          <span class="date">{{ item.pubdate }}</span>
         </div>
       </div>
       <div class="right">
@@ -69,7 +66,35 @@ export default {
         channel_id: null, // 表示没有任何的频道
         dateRange: ''
       },
-      channels: []
+      channels: [],
+      list: [], // 文章列表内容
+      defaultImg: require('../../assets/img/shenqi01.jpg') // 地址对应的文件变成了变量 在编译的时候会被拷贝到对应位置
+    }
+  },
+  filters: {
+    filterStatus (value) {
+      switch (value) {
+        case 0:
+          return '草稿'
+        case 1:
+          return '待审核'
+        case 2:
+          return '审核通过'
+        case 3:
+          return '审核失败'
+      }
+    },
+    filterType (value) {
+      switch (value) {
+        case 0:
+          return 'warning'
+        case 1:
+          return 'info'
+        case 2:
+          return ''
+        case 3:
+          return 'danger'
+      }
     }
   },
   methods: {
@@ -79,12 +104,22 @@ export default {
         url: '/channels'
       }).then(result => {
         // 获取频道接口返回的数据
-        this.channels = result.data.channels
+        this.channels = result.data.results
+      })
+    },
+    getArticles () {
+      this.$axios({
+        url: '/articles'
+      }).then(res => {
+        this.list = res.data.results
+        //  this.list = result.data.results
+        console.log(res.data.results)
       })
     }
   },
   created () {
     this.getChannels()
+    this.getArticles() // 手动调用文章数据
   }
 }
 </script>
