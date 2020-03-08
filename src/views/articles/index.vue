@@ -9,6 +9,7 @@
       <el-form-item label="文章状态:">
         <!-- el-radio-group单选框 -->
         <el-radio-group v-model="searchForm.status">
+          <!-- <el-radio-group v-model="searchForm.status" @change="changeCondition"> -->
           <!-- el-radio单选页 -->
           <el-radio :label="5">全部</el-radio>
           <el-radio :label="0">草稿</el-radio>
@@ -18,14 +19,16 @@
         </el-radio-group>
       </el-form-item>
       <el-form-item label="频道类型:">
-        <!-- 选择器 -->
+        <!-- 频道选择器 -->
         <el-select placeholder="请选择频道" v-model="searchForm.channel_id">
+          <!-- <el-select placeholder="请选择频道" v-model="searchForm.channel_id" @change="changeCondition"> -->
           <el-option v-for="item in channels" :key="item.id" :label="item.name" :value="item.id"></el-option>
         </el-select>
       </el-form-item>
       <el-form-item label="日期范围:">
         <!-- 时间选择 -->
-        <el-date-picker type="daterange" v-model="searchForm.dateRange"></el-date-picker>
+        <el-date-picker value-format="yyyy-MM-dd" type="daterange" v-model="searchForm.dateRange"></el-date-picker>
+        <!-- <el-date-picker @change="changeCondition" value-format="yyyy-MM-dd" type="daterange" v-model="searchForm.dateRange"></el-date-picker> -->
       </el-form-item>
     </el-form>
     <!-- 文章的主题结构-内容~~~~~~~~~~~~~~~~~~~~~~~~ -->
@@ -46,11 +49,22 @@
         <span>
           <i class="el-icon-edit"></i> 修改
         </span>
-        <span>
+        <span @click="delMaterial(item.id.toString())">
           <i class="el-icon-delete"></i> 删除
         </span>
       </div>
     </div>
+    <!-- 分页组件 -->
+    <el-row type="flex" justify="center" style="height:80px" align="middle">
+      <el-pagination
+        :current-page="page.currentPage"
+        :page-size="page.pageSize"
+        :total="page.tatal"
+        background
+        layout="prev,pager,next"
+        @current-change="changePage"
+      ></el-pagination>
+    </el-row>
   </el-card>
 </template>
 
@@ -58,17 +72,33 @@
 export default {
   data () {
     return {
+      page: {
+        currentPage: 1, // 当前页码
+        pageSize: 10, // 每页10-50条数据
+        tatal: 0 // 总数
+      },
       searchForm: {
         // 数据
         // 文章状态，0-草稿，1-待审核，2-审核通过，3-审核失败，4-已删除，不传为全部 / 先将 5 定义成 全部
         // 传值的是时候如果是5 就不传
         status: 5, // 默认为全部的状态
         channel_id: null, // 表示没有任何的频道
-        dateRange: ''
+        dateRange: '' // 时间
       },
       channels: [],
       list: [], // 文章列表内容
       defaultImg: require('../../assets/img/shenqi01.jpg') // 地址对应的文件变成了变量 在编译的时候会被拷贝到对应位置
+    }
+  },
+  // 监听data中的数据变化  第二种解决方案  watch监听对象的深度检测方案
+  watch: {
+    searchForm: {
+      deep: true,
+      // handler也是一个固定写法 一旦数据发生任何变化 就会触发 更新
+      handler () {
+        this.page.currentPage = 1 // 只要条件变化 就回到第一页
+        this.changeCondition() // this 指向当前组件实例
+      }
     }
   },
   filters: {
@@ -98,6 +128,51 @@ export default {
     }
   },
   methods: {
+    //   删除
+    delMaterial (id) {
+      console.log(id)
+      this.$confirm('您确定删除此条数据?', '提示').then(() => {
+        // 如果进入了then 表示点击了确定
+        this.$axios({
+          method: 'delete',
+          url: `/articles/${id}` // 地址 是  /articles/:target target 是文章id
+        })
+          .then(() => {
+            // 如果删除成功了
+            // 重新获取数据
+            //  this.getArticles() // 如果这么写 就意味着你 舍去了当前的页码和条件 不能这么写
+            // 应该带着条件和页码去加载
+            this.changeCondition() // 重新加载
+          })
+          .catch(() => {
+            this.$message.error('删除文章失败')
+          })
+      })
+    },
+    //   改变页码，换页
+    changePage (newPage) {
+      this.page.currentPage = newPage // 获取当前最新的页码
+      this.changeCondition()
+    },
+    //   按条件进行筛选 获取相应的内容changeCondition
+    changeCondition () {
+      const params = {
+        page: this.page.currentPage,
+        per_page: this.page.pageSize,
+        status: this.searchForm.status === 5 ? null : this.searchForm.status,
+        channel_id: this.searchForm.channel_id, // 表示没有任何的频道
+        begin_pubdate:
+          this.searchForm.dateRange && this.searchForm.dateRange.length
+            ? this.searchForm.dateRange[0]
+            : null,
+        end_pubdate:
+          this.searchForm.dateRange && this.searchForm.dateRange.length > 1
+            ? this.searchForm.dateRange[1]
+            : null
+      }
+      //   console.log(params)
+      this.getArticles(params)
+    },
     // 获取频道数据
     getChannels () {
       this.$axios({
@@ -107,18 +182,20 @@ export default {
         this.channels = result.data.results
       })
     },
-    getArticles () {
+    // 获取文章列表
+    getArticles (params) {
       this.$axios({
-        url: '/articles'
-      }).then(res => {
-        this.list = res.data.results
-        //  this.list = result.data.results
-        console.log(res.data.results)
+        url: '/articles',
+        params
+      }).then(result => {
+        this.list = result.data.results // 获取文章列表
+        // 将总数赋值给 tatal
+        this.page.tatal = result.data.total_count
       })
     }
   },
   created () {
-    this.getChannels()
+    this.getChannels() // 获取频道数据
     this.getArticles() // 手动调用文章数据
   }
 }
