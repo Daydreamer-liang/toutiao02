@@ -6,24 +6,23 @@
       src="//player.bilibili.com/player.html?aid=10757732&cid=17748434&page=1"
       scrolling="no"
       border="10"
-      frameborder=1
+      frameborder="1"
       framespacing="0"
       allowfullscreen="true"
       width="100%"
       height="100%"
     ></iframe>
-    <!-- <iframe
-      src="http://open.iqiyi.com/developer/player_js/coopPlayerIndex.html?vid=58d6db0ff46ef123c79bb138180e95e6&tvId=7981103109&accessToken=2.f22860a2479ad60d8da7697274de9346&appKey=3955c3425820435e86d0f4cdfe56f5e7&appId=1368&height=100%&width=100%"
-      frameborder="0"
-      allowfullscreen="true"
-      width="100%"
-      height="100%"
-    ></iframe> -->
+    <div ref="myChart" class="eharts"></div>
   </div>
 </template>
 
 <script>
+import ECharts from 'echarts'
 export default {
+  mounted () {
+    // 图标实例化、
+    ECharts.init(this.$refs.myChart)
+  }
   //   data () {
   //     return {
   //       value: new Date()

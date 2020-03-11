@@ -1,8 +1,12 @@
 <template>
+<!-- 这是右侧导航 -->
   <!-- 换成element-ui的 el-row el-col  -->
   <el-row type="flex" align="middle" class="layout-header">
     <el-col :span="12" class="left">
-      <i class="el-icon-s-fold"></i>
+      <i
+        @click="collapse=!collapse"
+        :class="{'el-icon-s-fold':!collapse,'el-icon-s-unfold':collapse}"
+      ></i>
       <span>江苏传智播客教育科技股份有限公司</span>
     </el-col>
     <el-col class="right" :span="12">
@@ -27,28 +31,44 @@
 </template>
 
 <script>
+import eventBus from '@/utils/eventBus' // 公共领域监听
 export default {
   data () {
     return {
       // 用户个人信息
-      userInfo: {}
+      userInfo: {},
+      collapse: false // 开始 不是折叠的
     }
   },
-  //   获取用户个人信息
+  watch: {
+    collapse () {
+      // 此时说明 折叠状态变化了 我们通知导航组件
+      eventBus.$emit('changeCollapse')
+    }
+  },
   created () {
     // const token = localStorage.getItem('user-token')
-    this.$axios({
-      url: '/user/profile'
-    //   headers: {
-    //     Authorization: `Bearer ${token}`
-    //   }
-    }).then(res => {
-      // 加载成功，赋值给userInfo
-      this.userInfo = res.data
-      //   console.log(res.data.data)
+    this.getUserInfo() // 正常加载
+    eventBus.$on('updateUser', () => {
+      // 如果有人触发updataUser 事件，就会进入到该函数
+      this.getUserInfo()
     })
   },
   methods: {
+    //   获取用户个人信息
+    getUserInfo () {
+      // const token = localStorage.getItem('user-token')
+      this.$axios({
+        url: '/user/profile'
+        //   headers: {
+        //     Authorization: `Bearer ${token}`
+        //   }
+      }).then(res => {
+        // 加载成功，赋值给userInfo
+        this.userInfo = res.data
+        //   console.log(res.data.data)
+      })
+    },
     clickmenu (command) {
       if (command === 'info') {
       } else if (command === 'git') {

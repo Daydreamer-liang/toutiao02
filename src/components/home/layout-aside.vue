@@ -2,17 +2,18 @@
   <div class="layout-aside">
     <!-- 头部图片 -->
     <div class="title">
-      <img src="../../assets/img/logo_admin.png" alt />
+      <img :src="collapse ? smallImg : bigImg"  alt />
     </div>
     <!-- 导航菜单 -->
-    <el-menu router background-color="#323745" text-color="#adafb5">
+    <!-- 父组件变量collapse 给collapse -->
+    <el-menu :collapse="collapse" router background-color="#323745" text-color="#adafb5">
       <!-- 子菜单并且没有子菜单的 用el-menu-item -->
       <el-menu-item index="/home">
         <i class="el-icon-s-home"></i>
         <span>首页</span>
       </el-menu-item>
       <!-- 二级菜单用   <el-submenu> -->
-      <el-submenu index='1'>
+      <el-submenu index="1">
         <!-- 匿名插槽是二级菜单，具名插槽title是一级菜单 -->
         <!-- 二级菜单还是使用<el-menu-item> -->
         <template slot="title">
@@ -24,7 +25,7 @@
         <el-menu-item index="/home/comment">评论列表</el-menu-item>
         <el-menu-item index="/home/material">素材管理</el-menu-item>
       </el-submenu>
-      <el-submenu  index='1'>
+      <el-submenu index="2">
         <!-- 匿名插槽是二级菜单，具名插槽title是一级菜单 -->
         <!-- 二级菜单还是使用<el-menu-item> -->
         <template slot="title">
@@ -36,7 +37,7 @@
         <el-menu-item index="/home/fansinfo">粉丝画像</el-menu-item>
         <el-menu-item index="/home/fanslist">粉丝列表</el-menu-item>
       </el-submenu>
-      <el-menu-item>
+      <el-menu-item index="/home/account">
         <i class="el-icon-user-solid"></i>
         <span>账户信息</span>
       </el-menu-item>
@@ -45,14 +46,22 @@
 </template>
 
 <script>
-export default {}
+export default {
+  props: ['collapse'], // 接收父组件传来的变量
+  data () {
+    return {
+      bigImg: require('../../assets/img/logo_admin.png'),
+      smallImg: require('../../assets/img/toutiao.png')
+    }
+  }
+}
 </script>
 
 <style lang='less' scoped>
 .layout-aside {
   background-color: #2e2f32;
   height: 100vh;
-  width: 230px;
+  //   width: 230px;
   .title {
     text-align: center;
     padding: 10px;

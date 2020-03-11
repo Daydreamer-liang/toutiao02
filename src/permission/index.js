@@ -1,9 +1,14 @@
 // 专门 处理路由权限
 
 import router from '@/router'
+import progerss from 'nprogress'// 进度条
+import 'nprogress/nprogress.css'
 // import router from '@/router'
 // 注册全局的权限守卫
 router.beforeEach(function (to, from, next) {
+  // 开启进度条
+  // progress.start()
+  progerss.start()
   // 如果页面地址 以 home开头 就进行token判断
   if (to.path.startsWith('/home')) {
     // 你要去主页 看看你有钥匙吗
@@ -17,6 +22,13 @@ router.beforeEach(function (to, from, next) {
     //   不是去主页 就放过
     next()
   }
+})
+
+// 进度条：应该在全局守卫的后置位置 关闭-此时已完成了路由的跳转
+router.afterEach(() => {
+  // 处理 进度条关闭的问题
+  // setTimeout(() => progress.done(), 300)
+  progerss.done()
 })
 
 // router.beforeEach(function (to, from, next) {

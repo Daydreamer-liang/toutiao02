@@ -8,6 +8,10 @@ Vue.use(VueRouter)
 
 const routes = [
   {
+    path: '*', // 匹配任何找不到的 404
+    component: () => import('@/views/404')// 评论列表的组件。按需加载
+  },
+  {
     path: '/',
     redirect: '/home'
   },
@@ -35,6 +39,10 @@ const routes = [
       {
         path: 'publish/:articleId?', // 发布文章的地址，不要写/
         component: () => import('@/views/publish')// 评论列表的组件。按需加载
+      },
+      {
+        path: 'account', // 发布文章的地址，不要写/
+        component: () => import('@/views/account')// 评论列表的组件。按需加载
       }
     ]
   },
