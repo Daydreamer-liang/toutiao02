@@ -21,20 +21,19 @@
       <el-form-item label="频道类型:">
         <!-- 频道选择器 -->
         <el-select placeholder="请选择频道" v-model="searchForm.channel_id">
-          <!-- <el-select placeholder="请选择频道" v-model="searchForm.channel_id" @change="changeCondition"> -->
+          <!-- <el-option v-for="item in channels" :key="item" :label="item.name" :value="item.id"></el-option> -->
           <el-option v-for="item in channels" :key="item.id" :label="item.name" :value="item.id"></el-option>
         </el-select>
       </el-form-item>
       <el-form-item label="日期范围:">
         <!-- 时间选择 -->
         <el-date-picker value-format="yyyy-MM-dd" type="daterange" v-model="searchForm.dateRange"></el-date-picker>
-        <!-- <el-date-picker @change="changeCondition" value-format="yyyy-MM-dd" type="daterange" v-model="searchForm.dateRange"></el-date-picker> -->
       </el-form-item>
     </el-form>
     <!-- 文章的主题结构-内容~~~~~~~~~~~~~~~~~~~~~~~~ -->
-    <el-card type="flex" align="middle" class="total">
-      <span>共找到1000条复合条件的内容</span>
-    </el-card>
+    <el-row class="total" type="flex" align="middle">
+      <span>共找到{{page.total}}条复合条件的内容</span>
+    </el-row>
     <!-- 内容 -->
     <div class="article-item" v-for="item in list " :key="item.id.toString()">
       <div class="left">
@@ -46,7 +45,7 @@
         </div>
       </div>
       <div class="right">
-        <span>
+        <span @click="$router.push(`/home/publish/${item.id.toString()}`)">
           <i class="el-icon-edit"></i> 修改
         </span>
         <span @click="delMaterial(item.id.toString())">
@@ -59,7 +58,7 @@
       <el-pagination
         :current-page="page.currentPage"
         :page-size="page.pageSize"
-        :total="page.tatal"
+        :total="page.total"
         background
         layout="prev,pager,next"
         @current-change="changePage"
@@ -75,7 +74,7 @@ export default {
       page: {
         currentPage: 1, // 当前页码
         pageSize: 10, // 每页10-50条数据
-        tatal: 0 // 总数
+        total: 0 // 总数
       },
       searchForm: {
         // 数据
@@ -101,6 +100,7 @@ export default {
       }
     }
   },
+
   filters: {
     filterStatus (value) {
       switch (value) {
@@ -128,9 +128,12 @@ export default {
     }
   },
   methods: {
-    //   删除
+    toPublish () {
+      // 编程式导航
+      this.$router.push('/home/publish')
+    },
     delMaterial (id) {
-      console.log(id)
+      //  先友好的提示一下
       this.$confirm('您确定删除此条数据?', '提示').then(() => {
         // 如果进入了then 表示点击了确定
         this.$axios({
@@ -151,16 +154,21 @@ export default {
     },
     //   改变页码，换页
     changePage (newPage) {
-      this.page.currentPage = newPage // 获取当前最新的页码
-      this.changeCondition()
+      // 先将最新的页码给到 当前页码
+      this.page.currentPage = newPage // 最新页码
+      this.changeCondition() // 直接调用改变事件的方法
     },
     //   按条件进行筛选 获取相应的内容changeCondition
+    // 改变了条件
     changeCondition () {
+      // 当触发此方法的时候 表单数据已经变成最新的了
+      // 组装条件 params
       const params = {
-        page: this.page.currentPage,
+        page: this.page.currentPage, // 如果条件改变 就回到第一页
         per_page: this.page.pageSize,
-        status: this.searchForm.status === 5 ? null : this.searchForm.status,
-        channel_id: this.searchForm.channel_id, // 表示没有任何的频道
+        // 文章状态，0-草稿，1-待审核，2-审核通过，3-审核失败，4-已删除，不传为全部
+        status: this.searchForm.status === 5 ? null : this.searchForm.status, // 5 是我们前端虚构的
+        channel_id: this.searchForm.channel_id, // 就是表单的数据
         begin_pubdate:
           this.searchForm.dateRange && this.searchForm.dateRange.length
             ? this.searchForm.dateRange[0]
@@ -170,8 +178,8 @@ export default {
             ? this.searchForm.dateRange[1]
             : null
       }
-      //   console.log(params)
-      this.getArticles(params)
+      // 通过接口传入
+      this.getArticles(params) // 直接调用获取方法
     },
     // 获取频道数据
     getChannels () {
@@ -179,7 +187,7 @@ export default {
         url: '/channels'
       }).then(result => {
         // 获取频道接口返回的数据
-        this.channels = result.data.results
+        this.channels = result.data.channels
       })
     },
     // 获取文章列表
@@ -190,7 +198,7 @@ export default {
       }).then(result => {
         this.list = result.data.results // 获取文章列表
         // 将总数赋值给 tatal
-        this.page.tatal = result.data.total_count
+        this.page.total = result.data.total_count
       })
     }
   },

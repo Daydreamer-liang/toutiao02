@@ -29,8 +29,12 @@ const routes = [
         component: () => import('@/views/material')// 评论列表的组件。按需加载
       },
       {
-        path: 'articles', // 评论列表的地址，不要写/
+        path: 'articles', // 内容列表的地址，不要写/
         component: () => import('@/views/articles')// 评论列表的组件。按需加载
+      },
+      {
+        path: 'publish/:articleId?', // 发布文章的地址，不要写/
+        component: () => import('@/views/publish')// 评论列表的组件。按需加载
       }
     ]
   },

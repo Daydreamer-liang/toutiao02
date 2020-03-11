@@ -42,13 +42,13 @@ export default {
       loginrules: {
         mobile: [
           // required 为true 为该字段必填
-          { required: true, message: '手机号不能为空' },
+          { required: true, message: '手机号不能为空', trigger: 'blur' },
           //   1为开头第二位是 3-9 后面9个数随机
-          { pattern: /^1[3-9]\d{9}$/, message: '手机号格式不正确' }
+          { pattern: /^1[3-9]\d{9}$/, message: '手机号格式不正确', trigger: 'blur' }
         ],
         code: [
-          { required: true, message: '验证码不能为空' },
-          { pattern: /^\d{6}$/, message: '验证码格式不正确' }
+          { required: true, message: '验证码不能为空', trigger: 'blur' },
+          { pattern: /^\d{6}$/, message: '验证码格式不正确', trigger: 'blur' }
         ],
         checkbox: [
           {
